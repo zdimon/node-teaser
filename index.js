@@ -24,7 +24,12 @@ gidrate_db = function(db){
         db['teasers'][i]['short_text'] = db['teasers'][i]['text'].substring(0,40);
     } 
 }
-gidrate_db(db)
+
+save_db = function(){
+    fs.writeFileSync(dbpath, JSON.stringify(db));
+}
+
+gidrate_db(db);
 
 
 app.get('/', (req, res) => {
@@ -37,18 +42,33 @@ app.post('/', (req, res) => {
     var form = new formidable.IncomingForm();
     
     form.parse(req, function (err, fields, files) {
-        console.log(files);
+        //console.log(files);
         //var oldpath = files.filetoupload.path;
         var oldpath = files.image.path;
-        var newpath = __dirname + "/public/" + fields.fname;
+        var newpath = __dirname + "/public/" + 
+            path.basename(fields.fname)
+            .replace(path.extname(fields.fname),'') + path.extname(files.image.name);
+
         fs.copyFile(oldpath, newpath, (err) => {
             if (err) throw err;
-          });
-          
-         
+          });    
+
+        
+        db['teasers'].forEach(function(item, i) {
+            fn = path.basename(item['image_url'])
+            if (fn==fields.fname){
+                console.log(fn);
+                db['teasers'][i]['image_url'] = '/image/'+fn.replace(path.extname(fn),'')+path.extname(files.image.name);
+                //console.log(db['teasers'][i]);
+            }
+        });
+
+        
 
      }
     )
+    gidrate_db(db);
+    save_db();
     res.redirect('/');
     //res.sendFile(__dirname + '/public/index.html')
     //res.render('index.html',db);
