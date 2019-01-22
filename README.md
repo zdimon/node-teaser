@@ -4,7 +4,15 @@
 
 	npm install
 
-## Running
+## Running in prod mode
 
-	npm start
+	npm starrun prodserver
 
+## Running in dev mode
+
+	npm run devserver
+
+
+## Checking
+
+	http://localhost:3000
