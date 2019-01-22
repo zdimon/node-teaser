@@ -55,7 +55,8 @@ app.post('/', (req, res) => {
 
         
         db['teasers'].forEach(function(item, i) {
-            fn = path.basename(item['fname'])
+            fn = path.basename(item['fname']);
+            console.log(fn+'='+fields.fname);
             if (fn==fields.fname){
                 console.log(fn);
                 db['teasers'][i]['image_url'] = '/image/'+fn.replace(path.extname(fn),'')+path.extname(files.image.name);
