@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.min.css">
+
+    <link rel="stylesheet" href="/main.css" />
+
+    <title>Teaser Website</title> 
+  </head> 
+  <body>
+  
+    
+
+    <div class="container bg-light">
+        <h1>Teaser</h1>
+        <div class="row">
+      
+        
+          {{#teasers}}
+          <div class="col-md-4">
+            <div class="card-body">
+                <img src="/image/{{ fname }}?w=250&h=100"   class="img-fluid" />
+
+                <div class="row">{{ type }}</div>
+                <div class="row">{{ short_text }}...</div>
+                
+              
+              <div class="row">
+                <a  class="icon show_image"><img fname="{{ fname }}" src="/image/preview.png"/></a>
+                <a class="icon upload_link" fname="{{ fname }}"><img src="/image/link-download.svg" fname="{{ fname }}" /></a>
+              </div>
+                
+            </div> 
+          </div>
+          {{/teasers}}
+
+          </div>
+      </div>
+
+
+
+      <div class="modal" tabindex="-1" role="dialog" id="modal_form">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">Download image</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                
+                <form enctype="multipart/form-data" id="upload_form" method="POST" >
+                    <input type="file" name="image" />
+                    
+                    <input type="hidden" id="name_image" name="fname" value="qqq.jpg" />
+
+              </div>
+              <div class="modal-footer">
+                <input type="submit" class="btn btn-primary" name="Upload">
+                
+              </div>
+            </form>
+            </div>
+          </div>
+        </div>
+
+
+        
+
+
+
+        <div id="imagemodal" class="show_img_modal">
+            <span class="close">&times;</span>
+            <img class="modal-content" id="showing_image">
+            <div id="caption"></div>
+          </div>
+
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="/node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="/node_modules/popper.js/dist/popper.min.js" ></script>
+    <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+
+    <script>
+   
+      $('.upload_link').on('click', function (e) {
+      $('#name_image').val($(e.target).attr('fname'));
+      $('#modal_form').modal('show');
+    })   
+    
+    $('.show_image').on('click', function (e) {
+      var image = $(e.target).attr('fname');
+      $('#showing_image').attr('src','/image/'+image); 
+      $('#imagemodal').modal('show');
+      console.log(image);
+    }) 
+
+    $('.close').on('click',function(){
+      $('#imagemodal').modal('hide');
+    });
+
+  $(document).keyup(function(e) {
+      if (e.key === "Escape") { // escape key maps to keycode `27`
+        $('#imagemodal').modal('hide');
+      }
+  })
+
+    </script>
+  </body>
+</html>

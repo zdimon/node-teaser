@@ -2,10 +2,58 @@ const express = require('express')
 const app = express()
 const im = require('imagemagick');
 const fs = require('fs');
+var mustacheExpress = require('mustache-express');
+var path = require("path");
+var formidable = require('formidable');
+
+app.engine('html', mustacheExpress());
+app.set('view engine', 'mustache');
+app.set('views', __dirname + '/views');
+app.use(express.static(__dirname + '/public'));
+
+var dbpath = __dirname + '/public/data.json';
+var db = fs.readFileSync(dbpath)
+db = JSON.parse(db)
+
+gidrate_db = function(db){
+    for (var i in db['teasers']) {
+        fname = path.basename(db['teasers'][i]['image_url']);
+
+        db['teasers'][i]['fname'] = fname;
+        db['teasers'][i]['type'] = path.extname(fname).replace('.','').toUpperCase();
+        db['teasers'][i]['short_text'] = db['teasers'][i]['text'].substring(0,40);
+    } 
+}
+gidrate_db(db)
+
 
 app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/public/index.html')
+    //res.sendFile(__dirname + '/public/index.html')
+    res.render('index.html',db);
 });
+
+
+app.post('/', (req, res) => {
+    var form = new formidable.IncomingForm();
+    
+    form.parse(req, function (err, fields, files) {
+        //console.log(fields);
+        //var oldpath = files.filetoupload.path;
+        var oldpath = files.image.path;
+        var newpath = __dirname + "/public/" + fields.fname;
+        fs.copyFile(oldpath, newpath, (err) => {
+            if (err) throw err;
+          });
+          
+         
+
+     }
+    )
+    res.redirect('/');
+    //res.sendFile(__dirname + '/public/index.html')
+    //res.render('index.html',db);
+});
+
 
 app.get('/file/:name', (req, res) => {
 
@@ -20,7 +68,10 @@ app.get('/file/:name', (req, res) => {
 });
 
 app.get('/image/:name', (req, res) => {
-    
+    //console.log(req.query.w);
+    req.query.width = req.query.w
+    req.query.height = req.query.h
+
     var imagepath = __dirname + "/public/" + req.params.name;
 
     if (!req.query.width ^ !req.query.height) {
@@ -55,5 +106,5 @@ app.get('/image/:name', (req, res) => {
     });
 });
 
-
+ 
 app.listen(3000, () => console.log('Example app listening on port 3000!'));
