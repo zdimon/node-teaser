@@ -37,7 +37,7 @@ app.post('/', (req, res) => {
     var form = new formidable.IncomingForm();
     
     form.parse(req, function (err, fields, files) {
-        //console.log(fields);
+        console.log(files);
         //var oldpath = files.filetoupload.path;
         var oldpath = files.image.path;
         var newpath = __dirname + "/public/" + fields.fname;
